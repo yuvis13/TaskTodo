@@ -1,0 +1,127 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+
+/*.list{
+  display: flex;
+  justify-content:  center;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 100px;
+  }
+  .box{
+    display: inline-block
+  }
+ 
+  .list li{
+ 
+    display: flex;
+    align-items: center;
+  }
+  label{
+    line-height: 50px;
+    
+  }
+  button{
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 15px;
+  }
+ .content{
+  display: flex;
+  column-gap: 2%;
+  line-height: 30px;
+ }
+ 
+.search-box{
+  position: fixed;
+  top: 30%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: aqua;
+  width:  50%;
+  justify-content: center;
+  
+}
+.text-box{
+  display: flex;
+  flex-direction: row;
+  gap: 2%;
+ 
+}
+.search-box {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}*/
+
+.text-box {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.text-box input {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.text-box button {
+  padding: 5px 10px;
+}
+
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.content th, .content td {
+  border: none;
+  padding: 8px;
+}
+
+@media only screen and (max-width: 768px) {
+  .text-box {
+      flex-direction: column;
+  }
+  
+  .text-box input {
+      margin-bottom: 10px;
+      margin-right: 0;
+  }
+
+  .text-box button {
+      margin-top: 10px;
+  }
+}
+.content td.title {
+  max-width: 200px; /* Adjust the desired fixed width */
+  word-wrap: break-word; /* Allow the text to wrap within the fixed width */
+}
+.search-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center items horizontally */
+  
+  
+}
+
+.text-box {
+  display: flex;
+  gap: 2%;
+  align-items: center;
+}
