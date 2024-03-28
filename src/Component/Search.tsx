@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-
+type Post = {
+    userId: number,
+    id: number,
+    title: string,
+    completed: boolean
+}
 export const Search = () => {
-    type Post = {
-        userId: number,
-        id: number,
-        title: string,
-        completed: boolean
-    }
+    
 
     const [task, setTask] = useState<Post[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
@@ -67,7 +67,7 @@ export const Search = () => {
     
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        if (/^[A-Za-z\s]+$/.test(value) || value === '') {
+        if (/^[A-Za-z\s]+$/.test(value)) {
             setInputValue(value);
         }
     };
@@ -79,7 +79,6 @@ export const Search = () => {
                 <input 
                     type="text" 
                     placeholder="Enter the task..." 
-                    pattern="[A-Za-z\s]+"
                     value={inputValue} 
                     onChange={handleInputChange} 
                 />
