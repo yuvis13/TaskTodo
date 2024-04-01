@@ -12,6 +12,9 @@ export const Search = () => {
     const [task, setTask] = useState<Postr[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false); 
+    const [editableTaskIndex, setEditableTaskIndex] = useState<number | null>(null);
+    const [editedTaskTitle, setEditedTaskTitle] = useState<string>('');
+
     
 
     useEffect(() => {
@@ -30,7 +33,7 @@ export const Search = () => {
 
     const handleAddButtonClick= ()=>{
         setIsLoading(true); 
-        const newTask: Postr = {
+        const newTask = {
             userId: Math.floor(Math.random() * 1000),
             id: Math.floor(Math.random() * 1000),
             title: inputValue,
@@ -40,7 +43,6 @@ export const Search = () => {
             method:'POST',
             headers:{
                 'Content-Type':'application/json',
-                'Access-Control-Allow-Origin': '*'
             },
             body:JSON.stringify(newTask)
         }
@@ -78,45 +80,56 @@ export const Search = () => {
 
     const handleDeleteButtonClick = (index: number) => {
         setIsLoading(true); 
-        fetch('https://jsonplaceholder.typicode.com/posts/1', {
-        method: 'DELETE',
+        const taskId = task[index].id; // Get the ID of the task to delete
+        fetch(`https://jsonplaceholder.typicode.com/todos/${task[index].id}`, {
+            method: 'DELETE',
+        })
+        .then(() => {
+            const updatedTasks = [...task];
+            updatedTasks.splice(index, 1);
+            setTask(updatedTasks);
+            setIsLoading(false);
+        })
+        .catch(error => {
+            console.error('Error deleting task:', error);
+            setIsLoading(false);
         });
-        const updatedTask = [...task];
-        updatedTask.splice(index, 1);
-        
-        
-        setTimeout(() => {
-            setTask(updatedTask);
-            setIsLoading(false); 
-        }, 1000); 
     };
-    const handlePatchButtonClick = (taskId: number, updatedTitle: string) => {
+    
+ 
+    const handleEditButtonClick = (index: number) => {
+        setEditableTaskIndex(index);
+        setEditedTaskTitle(task[index].title);
+    };
+
+    const handleSaveButtonClick = (index: number) => {
         setIsLoading(true);
-        fetch(`https://jsonplaceholder.typicode.com/todos/${taskId}`, {
+        fetch(`https://jsonplaceholder.typicode.com/todos/${task[index].id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ title: updatedTitle })
+            body: JSON.stringify({ title: editedTaskTitle })
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to update task');
-                }
-                return response.json();
-            })
-            .then((data: Postr) => {
-                const updatedTasks = task.map(t =>
-                    t.id === taskId ? { ...t, title: updatedTitle } : t
-                );
-                setTask(updatedTasks);
-                setIsLoading(false);
-            })
-            .catch(error => {
-                console.error('Error updating task:', error);
-                setIsLoading(false);
-            });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to update task');
+            }
+            return response.json();
+        })
+        .then((data: Postr) => {
+            const updatedTasks = [...task];
+            updatedTasks[index].title = editedTaskTitle;
+            setTask(updatedTasks);
+            setEditableTaskIndex(null);
+            setIsLoading(false);
+        })
+        .catch(error => {
+            console.error('Error updating task:', error);
+            setIsLoading(false);
+        });
     };
+
     
     return (
         <div className="search-box">
@@ -132,32 +145,46 @@ export const Search = () => {
             </div>
 
             <div className="content">
-            {isLoading ? ( 
+                {isLoading ? ( 
                     <div className="loader">Loading...</div>
                 ) : (
-                <table>
-                    <tbody>
-                        {task.map((item, index) => (
-                            <tr key={index}>
-                                <td>
-                                    <input 
-                                        type="checkbox" 
-                                        checked={item.completed} 
-                                        onChange={() => handleCheckboxClick(index)} 
-                                    />
-                                </td>
-                                <td style={{ textDecoration: item.completed ? 'line-through' : 'none' }}>
-                                    {item.title}
-                                </td>
-                                <td>
-                                <button onClick={() => handlePatchButtonClick(item.id, item.title)}>Edit</button>
-                                    <button onClick={()=> handleDeleteButtonClick(index)}>delete</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>)
-            }
+                    <table>
+                        <tbody>
+                            {task.map((item, index) => (
+                                <tr key={index}>
+                                    <td>
+                                        <input 
+                                            type="checkbox" 
+                                            checked={item.completed} 
+                                            onChange={() => handleCheckboxClick(index)} 
+                                        />
+                                    </td>
+                                    <td>
+                                        {editableTaskIndex === index ? (
+                                            <input 
+                                                type="text" 
+                                                value={editedTaskTitle} 
+                                                onChange={(e) => setEditedTaskTitle(e.target.value)} 
+                                            />
+                                        ) : (
+                                            <span style={{ textDecoration: item.completed ? 'line-through' : 'none' }}>
+                                                {item.title}
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        {editableTaskIndex === index ? (
+                                            <button onClick={() => handleSaveButtonClick(index)}>Save</button>
+                                        ) : (
+                                            <button onClick={() => handleEditButtonClick(index)}>Edit</button>
+                                        )}
+                                        <button onClick={() => handleDeleteButtonClick(index)}>Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
             </div>
         </div>
     );
